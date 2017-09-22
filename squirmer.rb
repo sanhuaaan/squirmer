@@ -12,7 +12,8 @@ defonce :dfonc do
 end
 
 
-
+current_pad=nil
+midi_note_on 28, 3, port: "launch_control" if current_pad == nil
 sampler_s=nil
 fx_bitcrusher=nil
 fx_echo=nil
@@ -22,6 +23,11 @@ fx_flanger=nil
 live_loop :sample do
   use_real_time
   sample_num, velocity = sync "/midi/launch_control/0/16/note_on"
+  if sample_num != 28 and sample_num != current_pad
+    midi_note_on current_pad, 0, port: "launch_control"
+    midi_note_on sample_num, 127, port: "launch_control"
+    current_pad = sample_num
+  end
   sample_num-=12 if sample_num > 24
   if sample_num < 16
     loop do
@@ -47,9 +53,9 @@ live_loop :sample do
       s=(len*dfonc[sample_num+12])
       f=(len*dfonc[sample_num+32])
       if dfonc['loop'] == 1
-        if (f-s).abs < 0.125
+        if (f-s).abs < 0.15
           control sampler_s, beat_stretch: 0.125
-          sleep 0.125
+          sleep 0.15
         else
           sleep (f-s).abs
         end
@@ -65,7 +71,7 @@ live_loop :fx do
   if n == 28
     control sampler_s, pitch: (val/128.0)*7.5
     dfonc['pitch'] = ((val/128.0)*24) - 12
-    puts ((val/128.0)*24) - 12
+    puts "Pitch: #{((val/128.0)*24) - 12}"
   elsif n == 48
     control sampler_s, amp: (val/128.0)*4
     dfonc['amp'] = (val/128.0)*4
@@ -96,5 +102,6 @@ live_loop :loop_control do
   sample_num, velocity = sync "/midi/launch_control/0/16/note_on"
   if sample_num == 28
     dfonc['loop'] = dfonc['loop'] == 1 ? 0 : 1
+    midi_note_on 28, 3+(121*dfonc['loop']), port: "launch_control"
   end
 end
