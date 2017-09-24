@@ -27,7 +27,7 @@ end
 current_pad=nil
 current_page=0
 midi_note_on 28, 3, port: "launch_control" if current_pad == nil
-midi_note_on 27, 21, port: "launch_control" if current_pad == nil 
+midi_note_on 27, 21, port: "launch_control" if current_pad == nil
 
 
 live_loop :sample do
@@ -64,7 +64,7 @@ live_loop :sample do
           end
         end
       end
-      len=(sample_duration 'D:\Sonic Pi samples\sampler', sample_num-9)
+      len=(sample_duration 'D:\Sonic Pi samples\sampler',(sample_num-9) + dfonc['sample_page']*6)
       s=(len*dfonc[sample_num+12])
       f=(len*dfonc[sample_num+32])
       if dfonc['loop'] == 1
@@ -97,15 +97,15 @@ live_loop :fx do
     else
       control dfonc['fx_rm'], mix: 0
     end
-  elsif n == 47 
+  elsif n == 47
     control dfonc['sampler_s'], pan: ((val/128.0)*2) - 1
     dfonc['pan'] = ((val/128.0)*2) - 1
-  elsif n < 111 
+  elsif n < 111
     dfonc[n]=val/128.0
-  else 
+  else
     dfonc[n] = dfonc[n] == 1 ? 0 : 1 if (val==127)
     
-    case n 
+    case n
     when 114
       control dfonc['fx_bitcrusher'], mix: dfonc[114]
       midi_cc 114, (dfonc[114] * 3)
