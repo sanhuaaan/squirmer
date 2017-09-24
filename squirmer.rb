@@ -27,7 +27,7 @@ end
 current_pad=nil
 current_page=0
 midi_note_on 28, 3, port: "launch_control" if current_pad == nil
-midi_note_on 27, 21, port: "launch_control" if current_pad == nil #21/23
+midi_note_on 27, 21, port: "launch_control" if current_pad == nil 
 
 
 live_loop :sample do
@@ -42,7 +42,6 @@ live_loop :sample do
   sample_num-=12 if sample_num > 24
   if sample_num < 15
     loop do
-      puts dfonc[27]
       with_fx :ring_mod, freq: dfonc[27] == 0 ? 1 : dfonc[27], mix: dfonc[27] == 1 ? 0 : 1 do |fx_rm|
         with_fx :bitcrusher, mix: dfonc[114], bits: 4 do |fx_b|
           with_fx :echo, mix: dfonc[115], decay: 4 do |fx_e|
@@ -91,22 +90,22 @@ live_loop :fx do
   elsif n == 48
     control dfonc['sampler_s'], amp: (val/128.0)*4
     dfonc['amp'] = (val/128.0)*4
-  elsif n == 27 #freq ring_mod
+  elsif n == 27
     if val>0
       control dfonc['fx_rm'], freq: val, mix: 1
       dfonc[n]=val
     else
       control dfonc['fx_rm'], mix: 0
     end
-  elsif n == 47 #
+  elsif n == 47 
     control dfonc['sampler_s'], pan: ((val/128.0)*2) - 1
     dfonc['pan'] = ((val/128.0)*2) - 1
-  elsif n < 111 #knobs
+  elsif n < 111 
     dfonc[n]=val/128.0
-  else #botones fx
+  else 
     dfonc[n] = dfonc[n] == 1 ? 0 : 1 if (val==127)
     
-    case n #fx
+    case n 
     when 114
       control dfonc['fx_bitcrusher'], mix: dfonc[114]
       midi_cc 114, (dfonc[114] * 3)
