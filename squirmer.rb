@@ -1,3 +1,4 @@
+sample_source = 'D:\Sonic Pi samples\sampler'
 defonce :dfonc do
   {
     #knobs
@@ -52,7 +53,7 @@ live_loop :sample do
                 dfonc['fx_echo']=fx_e
                 dfonc['fx_reverb']=fx_r
                 dfonc['fx_flanger']=fx_f
-                dfonc['sampler_s'] = sample 'D:\Sonic Pi samples\sampler', (sample_num-9) + dfonc['sample_page']*6,
+                dfonc['sampler_s'] = sample sample_source, (sample_num-9) + dfonc['sample_page']*6,
                   start: dfonc[sample_num+12],
                   finish: dfonc[sample_num+32],
                   window_size: 0.5, time_dis: 0.5, #pitch_dis: 0.5,
